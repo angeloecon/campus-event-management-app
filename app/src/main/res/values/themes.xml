@@ -1,0 +1,32 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HCDCEvents" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/red</item>
+    </style>
+
+    <style name="Theme.HCDCEvents" parent="Base.Theme.HCDCEvents" />
+
+    <style name="Theme.HCDCEvents.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.HCDCEvents.TransparentStatusBar" parent="Base.Theme.HCDCEvents">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- 2. Set the status bar color to transparent -->
+        <!-- Note: We use a slight overlay color (#33000000) to ensure system icons (like time/battery) remain visible on light backgrounds -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- Optional: Ensure text/icons on the status bar are dark if your image is light -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+
+    <style name="Theme.HCDCEvents.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.HCDCEvents.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>
