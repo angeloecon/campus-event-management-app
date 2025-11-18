@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hcdcevents.data.model.Student;
 import com.example.hcdcevents.ui.home.ProfileSetupActivity;
 import com.example.hcdcevents.utils.Helper;
 import com.example.hcdcevents.ui.home.HomePageActivity;
@@ -30,6 +29,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
@@ -49,7 +50,7 @@ public class SignInActivity extends AppCompatActivity {
     DatabaseReference databaseRef ;
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 500;
-    private int retryCount = 0;
+
 //  TODO: Change Course to Program
 
     @Override
@@ -152,7 +153,7 @@ public class SignInActivity extends AppCompatActivity {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if(firebaseUser != null){
                                 String userId = firebaseUser.getUid();
-                                onSignInSuccess(userId);
+                                isFirstTimeLoggedInUsingGmail(userId, firebaseUser.getEmail(),firebaseUser.getDisplayName());
                             } else {
                                 Toast.makeText(this, "Users firebase is null.", Toast.LENGTH_SHORT).show();
                             }
@@ -178,10 +179,11 @@ public class SignInActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().signOut();
                     googleSignOutUser();
                     Toast.makeText(SignInActivity.this, "Account data not found. Please register first.", Toast.LENGTH_LONG).show();
+                    showLoadingIndicator(false);
                     return;
                 }
 
-                String finalProgram = snapshot.child("program").getValue(String.class);
+                String finalAcademicDivision = snapshot.child("academicDivision").getValue(String.class);
 
                 String finalName = snapshot.child("name").getValue(String.class);
                 String finalEmail = snapshot.child("email").getValue(String.class);
@@ -192,34 +194,17 @@ public class SignInActivity extends AppCompatActivity {
                 StudentCache.setStudentData(
                         finalName,
                         finalEmail,
-                        finalProgram,
+                        finalAcademicDivision,
                         isAdmin,
                         finalKey,
                         finalIcon
                 );
 
-                if(finalProgram == null || finalProgram.trim().isEmpty()){
+                if(finalAcademicDivision == null || finalAcademicDivision.trim().isEmpty()){
                     showLoadingIndicator(false);
                     redirectToProfileSetup();
                     finish();
                 }
-
-
-//                    if (retryCount < MAX_RETRIES) {
-//                        retryCount++;
-//                        Log.w("SignInActivity", "Program data still missing. Retrying in 500ms. Attempt: " + retryCount);
-//
-//
-//                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//                            onSignInSuccess(uid);
-//                        }, RETRY_DELAY_MS);
-//
-//                    } else {
-//                        Log.e("SignInActivity", "Program data missing after max retries. Redirecting to setup.");
-//                        showLoadingIndicator(false);
-//                        redirectToProfileSetup();
-//                        finish();
-//                    }
 
                  else {
                     Log.i("SignInActivity", "Program data found on attempt. Proceeding to Home.");
@@ -234,6 +219,46 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("Login", "Data check failed: " + databaseError.getMessage());
+                Toast.makeText(SignInActivity.this, "Authentication failed. Please try again.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void isFirstTimeLoggedInUsingGmail(String uid, String email, String name ){
+        if(uid == null) return;
+        databaseRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    Student newStudent = new Student(email, name, null, false);
+                    databaseRef.child(uid).setValue(newStudent).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful()){
+                                onSignInSuccess(uid);
+                            } else {
+                                showLoadingIndicator(false);
+                                Log.w(TAG, "signInWithGmail:failure", task.getException());
+                                Toast.makeText(SignInActivity.this, "Failed to generate profile automatically.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(SignInActivity.this, "Error saving profile data.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    return;
+                }
+
+                onSignInSuccess(uid);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Login", "Data creation failed: " + databaseError.getMessage());
                 Toast.makeText(SignInActivity.this, "Authentication failed. Please try again.", Toast.LENGTH_LONG).show();
             }
         });

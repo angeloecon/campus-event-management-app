@@ -34,8 +34,8 @@ public class Helper {
         return !matcher.matches();
     }
 
-    public static void programDropdown(AutoCompleteTextView courseSelect, Context context, int layoutID){
-        List<String> courses = Arrays.asList(
+    public static void academicDivisionDropdown(AutoCompleteTextView academicDivisionSelect, Context context, int layoutID){
+        List<String> academicDivision = Arrays.asList(
                 "COLLEGE OF CRIMINAL JUSTICE EDUCATION",
                 "COLLEGE OF ENGINEERING AND TECHNOLOGY",
                 "COLLEGE OF HOSPITALITY AND TOURISM",
@@ -45,8 +45,8 @@ public class Helper {
                 "SCHOOL OF TEACHER EDUCATION"
         );
 
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(context, layoutID, courses);
-        courseSelect.setAdapter(courseAdapter);
+        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(context, layoutID, academicDivision);
+        academicDivisionSelect.setAdapter(courseAdapter);
     }
 
     public static Drawable iconGenerator(String userName){

@@ -34,11 +34,14 @@ public class HomePageActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityHomePageBinding binding;
+    private TextView nameTextView, emailTextView;
+    private ImageView drawableTextView;
+
     @Override
     protected void onResume(){
         super.onResume();
         checkAdminStatusForFAB();
-
+        updateUI();
     }
 
     @Override
@@ -53,11 +56,38 @@ public class HomePageActivity extends AppCompatActivity {
 
         View headerView = navigationView.getHeaderView(0);
 
-        TextView nameTextView = headerView.findViewById(R.id.nameTextView);
-        TextView emailTextView = headerView.findViewById(R.id.emailTextView);
-        String headerName = StudentCache.getCurrentName();
+        nameTextView = headerView.findViewById(R.id.nameTextView);
+        emailTextView = headerView.findViewById(R.id.emailTextView);
+        drawableTextView = headerView.findViewById(R.id.imageView);
 
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_profile, R.id.nav_about)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home_page);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_log_out) {
+                logOut(drawer);
+                return true;
+            } else {
+                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+                if (handled) {
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+                return handled;
+            }
+        });
+    }
+
+    private void updateUI(){
+        String headerName = StudentCache.getCurrentName();
         String headerEmail = StudentCache.getCurrentEmail();
+        Drawable profileIcon = StudentCache.getcurrentProfileDrawable();
 
         if (nameTextView != null) {
             nameTextView.setText(headerName != null ? headerName : "Student");
@@ -65,10 +95,6 @@ public class HomePageActivity extends AppCompatActivity {
         if (emailTextView != null) {
             emailTextView.setText(headerEmail != null ? headerEmail : "Guest");
         }
-
-        final Drawable profileIcon = StudentCache.getcurrentProfileDrawable();
-        ImageView drawableTextView = headerView.findViewById(R.id.imageView);
-
 
         if (drawableTextView != null) {
             if (profileIcon != null) {
@@ -83,55 +109,28 @@ public class HomePageActivity extends AppCompatActivity {
                 drawableTextView.setImageResource(R.drawable.ic_default_profile_placeholder);
             }
         }
+    }
+    private void logOut(DrawerLayout drawer){
+        StudentCache.clearCache();
+        FirebaseAuth.getInstance().signOut();
 
-
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_profile, R.id.nav_about)
-                .setOpenableLayout(drawer)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home_page);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
 
-        navigationView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(HomePageActivity.this, gso);
+        googleSignInClient.signOut()
+                .addOnCompleteListener(task -> Log.d("SignOut", "Google client cleanup complete."));
 
-            if (id == R.id.nav_log_out) {
-
-                StudentCache.clearCache();
-                FirebaseAuth.getInstance().signOut();
-
-                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.default_web_client_id))
-                        .requestEmail()
-                        .build();
-
-                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(HomePageActivity.this, gso);
-                googleSignInClient.signOut()
-                        .addOnCompleteListener(task -> Log.d("SignOut", "Google client cleanup complete."));
-
-                Toast.makeText(HomePageActivity.this, "Logging out...", Toast.LENGTH_SHORT).show();
-                Intent logoutIntent = new Intent(HomePageActivity.this, SignInActivity.class);
-                logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(logoutIntent);
-                finish();
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            } else {
-                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
-                if (handled) {
-                    drawer.closeDrawer(GravityCompat.START);
-                }
-                return handled;
-            }
-        });
+        Toast.makeText(HomePageActivity.this, "Logging out...", Toast.LENGTH_SHORT).show();
+        Intent logoutIntent = new Intent(HomePageActivity.this, SignInActivity.class);
+        logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(logoutIntent);
+        finish();
+        drawer.closeDrawer(GravityCompat.START);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.home_page, menu);
-//        return true;
-//    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -153,25 +152,5 @@ public class HomePageActivity extends AppCompatActivity {
             binding.appBarHomePage.fab.setVisibility(View.GONE);
         }
     }
-
-//    private void updateNavigationHeader() {
-//        final Drawable profileIcon = StudentCache.getcurrentProfileDrawable();
-//        drawableTextView = headerView.findViewById(R.id.imageView);
-//
-//
-//        if (drawableTextView != null) {
-//            if (profileIcon != null) {
-//                drawableTextView.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        drawableTextView.setImageDrawable(profileIcon);
-//                        drawableTextView.invalidate();
-//                    }
-//                });
-//            } else {
-//                drawableTextView.setImageResource(R.drawable.default_profile_placeholder);
-//            }
-//        }
-//    }
 
 }

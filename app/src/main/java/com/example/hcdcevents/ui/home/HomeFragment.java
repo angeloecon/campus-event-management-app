@@ -3,13 +3,16 @@ package com.example.hcdcevents.ui.home;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.hcdcevents.R;
 import com.example.hcdcevents.data.model.StudentCache;
 import com.example.hcdcevents.databinding.FragmentHomeBinding;
+import com.example.hcdcevents.feature.events.CreateEvent;
 import com.example.hcdcevents.feature.events.Events;
 
 import com.example.hcdcevents.utils.Helper;
@@ -103,7 +107,7 @@ public class HomeFragment extends Fragment {
         TextView cardTextAuthor = eventCard.findViewById(R.id.card_text_poster);
         TextView cardTextLocation = eventCard.findViewById(R.id.card_text_location);
 
-        ImageView cardDeleteButton = eventCard.findViewById(R.id.card_delete_button);
+        ImageView cardMoreButton = eventCard.findViewById(R.id.card_more_button);
 
         cardIcon.setImageDrawable(Helper.iconGenerator(eventInfo.getEventOrganizer()));
         cardTextOrganizer.setText(eventInfo.getEventOrganizer());
@@ -112,9 +116,9 @@ public class HomeFragment extends Fragment {
         cardTextLocation.setText(eventInfo.getEventLocation());
         cardTextDateTime.setText(eventInfo.getEventDateString());
         cardTextAuthor.setText("Created by: " + eventInfo.getEventAuthor());
-        cardDeleteButton.setVisibility(StudentCache.isCurrentIsAdmin()? View.VISIBLE : View.GONE);
-        cardDeleteButton.setOnClickListener(v -> confirmDeleteEvent(eventInfo.getEventID(),
-                eventInfo.getEventTitle()));
+        cardMoreButton.setVisibility(StudentCache.isCurrentIsAdmin()? View.VISIBLE : View.GONE);
+        cardMoreButton.setOnClickListener(v -> popUpMenu(context, v, eventInfo.getEventID(), eventInfo.getEventTitle()));
+
         eventContainer.addView(eventCard);
     }
 
@@ -140,7 +144,31 @@ public class HomeFragment extends Fragment {
                 .show();
     }
 
+    private void popUpMenu(Context context, View v, String eventID, String eventTitle){
+        PopupMenu popup = new PopupMenu(context, v);
+        popup.getMenu().add(Menu.NONE, 1, Menu.NONE, "Edit Event");
+        popup.getMenu().add(Menu.NONE, 2, Menu.NONE, "Delete Event");
 
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == 1) {
+                editEventInfo(eventID);
+                return true;
+            } else if (id == 2) {
+                confirmDeleteEvent(eventID, eventTitle);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
+    }
 
+    private void editEventInfo(String eventID){
+        Intent intent = new  Intent(getContext(), CreateEvent.class);
+                intent.putExtra("EVENT_KEY", eventID);
+                intent.putExtra("EVENT_MODE", "EDIT");
+        startActivity(intent);
+
+    }
 
 }

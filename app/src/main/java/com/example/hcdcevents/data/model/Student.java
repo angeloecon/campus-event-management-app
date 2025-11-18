@@ -1,16 +1,16 @@
 package com.example.hcdcevents.data.model;
 
 public class Student {
-    String email, name, department;
+    String email, name, academicDivision;
     boolean isAdmin;
     public Student() {
 
     }
 
-    public Student(String email, String name, String department, boolean isAdmin) {
+    public Student(String email, String name, String academicDivision, boolean isAdmin) {
         this.email = email;
         this.name = name;
-        this.department = department;
+        this.academicDivision = academicDivision;
         this.isAdmin = isAdmin;
     }
 
@@ -30,12 +30,12 @@ public class Student {
         this.name = name;
     }
 
-    public String getDepartment() {
-        return department;
+    public String getAcademicDivision() {
+        return academicDivision;
     }
 
-    public void setDepartment(String program) {
-        this.department = program;
+    public void setAcademicDivision(String program) {
+        this.academicDivision = program;
     }
 
     public boolean getIsAdmin() {

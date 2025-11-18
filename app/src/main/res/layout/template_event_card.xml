@@ -44,16 +44,18 @@
 
             <ImageView
 
-                android:id="@+id/card_delete_button"
+                android:id="@+id/card_more_button"
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
-                android:contentDescription="Delete Event Post"
+                android:contentDescription="More Option Button"
                 android:focusable="true"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:src="@drawable/ic_more_horiz"
                 app:tint="@color/white"
                 android:visibility="visible"
+                android:scaleType="fitCenter"
+
                 />
         </LinearLayout>
 

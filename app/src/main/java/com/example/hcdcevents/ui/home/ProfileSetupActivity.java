@@ -14,7 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ProfileSetupActivity extends AppCompatActivity {
-    private AutoCompleteTextView programDropdown;
+    private AutoCompleteTextView academicDivisionDropdown;
     private DatabaseReference databaseRef;
 
     @Override
@@ -26,20 +26,20 @@ public class ProfileSetupActivity extends AppCompatActivity {
         databaseRef = FirebaseDatabase.getInstance().getReference("students");
 
         int layoutID = R.layout.dropdown_menu_item;
-        programDropdown = findViewById(R.id.program_dropdown_edit_text);
-        Helper.programDropdown(programDropdown, this, layoutID);
+        academicDivisionDropdown = findViewById(R.id.program_dropdown_edit_text);
+        Helper.academicDivisionDropdown(academicDivisionDropdown, this, layoutID);
 
         findViewById(R.id.submit_button).setOnClickListener(v -> submitButton());
     }
 
     public void submitButton (){
-        String currentCourse = programDropdown.getText().toString();
-        if(currentCourse.isEmpty()){
-            programDropdown.setError("Required!");
+        String currentAcademicDivision = academicDivisionDropdown.getText().toString();
+        if(currentAcademicDivision.isEmpty()){
+            academicDivisionDropdown.setError("Required!");
             return;
         }
-        StudentCache.setCurrentCourse(currentCourse);
-        databaseRef.child(StudentCache.getCurrentKey()).child("program").setValue(currentCourse);
+        StudentCache.setCurrentCourse(currentAcademicDivision);
+        databaseRef.child(StudentCache.getCurrentKey()).child("academicDivision").setValue(currentAcademicDivision);
         startActivity(new Intent(this, HomePageActivity.class));
         finish();
     }

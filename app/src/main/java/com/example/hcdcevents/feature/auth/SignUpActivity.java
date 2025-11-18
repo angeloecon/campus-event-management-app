@@ -37,7 +37,7 @@ import java.util.List;
 
 public class SignUpActivity extends AppCompatActivity {
     private TextInputEditText passwordInputText, emailInputText;
-    private AutoCompleteTextView programDropdown;
+    private AutoCompleteTextView academicDivisionDropdown;
     private Button signUpButton;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseRef;
@@ -48,9 +48,9 @@ public class SignUpActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up);
 
-        programDropdown = findViewById(R.id.program_dropdown_edit_text);
+        academicDivisionDropdown = findViewById(R.id.program_dropdown_edit_text);
         int layoutID = R.layout.dropdown_menu_item;
-        Helper.programDropdown(programDropdown, this,layoutID);
+        Helper.academicDivisionDropdown(academicDivisionDropdown, this,layoutID);
 
         mAuth = FirebaseAuth.getInstance();
         databaseRef = FirebaseDatabase.getInstance().getReference("students");
@@ -65,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void signUpStatus(){
         String studentEmail = emailInputText.getText().toString().trim();
         String studentPass = passwordInputText.getText().toString().trim();
-        String studentProgram = programDropdown.getText().toString();
+        String studentProgram = academicDivisionDropdown.getText().toString();
 
         if(studentPass.isEmpty() || studentEmail.isEmpty() || studentProgram.isEmpty()){
             Toast.makeText(SignUpActivity.this, "All fields are required.", Toast.LENGTH_SHORT).show();
@@ -85,7 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
         finish();
     }
 
-    private void signUp(String email, String password, String program){
+    private void signUp(String email, String password, String academicDivision){
         showLoadingIndicator(true);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -96,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             if(user != null){
                                 String studentUID = user.getUid();
-                                Student newStudent = new Student(email, generateDisplayName(email), program, false);
+                                Student newStudent = new Student(email, generateDisplayName(email), academicDivision, false);
                                 databaseRef.child(studentUID).setValue(newStudent).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -117,7 +117,7 @@ public class SignUpActivity extends AppCompatActivity {
                             }
                         } else {
                             showLoadingIndicator(false);
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Log.w(TAG, "signUnWithEmail:failure", task.getException());
                             Toast.makeText(SignUpActivity.this, "User already exist.",
                                     Toast.LENGTH_SHORT).show();
                         }
