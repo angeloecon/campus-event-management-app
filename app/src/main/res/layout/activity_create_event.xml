@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".feature.events.CreateEvent"
+    android:background="@color/white">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create New Event"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/red"
+                android:gravity="center"
+                android:paddingBottom="24dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutTitle"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="100"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextEventTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Event Title"
+                    android:inputType="textCapSentences"
+                    android:maxLength="100"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutDescription"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="500">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextEventDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="162dp"
+                    android:gravity="top"
+                    android:hint="Event Description"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:maxLength="500" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutOrganizer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextEventOrganizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Organizer (e.g., CETSO)"
+                    android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutLocation"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextEventLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Event Location"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Date:"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:paddingBottom="4dp" />
+
+            <Button
+                android:id="@+id/buttonPickDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Date"
+                android:backgroundTint="@color/red"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="8dp"
+                android:padding="12dp"/>
+
+            <TextView
+                android:id="@+id/textViewSelectedDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No date selected"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                android:textColor="@color/black"
+                android:paddingBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Time:"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:paddingBottom="4dp" />
+
+            <Button
+                android:id="@+id/buttonPickTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Time"
+                android:backgroundTint="@color/red"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="8dp"
+                android:padding="12dp"/>
+
+            <TextView
+                android:id="@+id/textViewSelectedTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No time selected"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                android:textColor="@color/black"
+                android:paddingBottom="24dp" />
+
+            <Button
+                android:id="@+id/buttonCreatePost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create Event Post"
+                android:backgroundTint="@color/red"
+                android:textColor="@android:color/white"
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10sp"
+                />
+
+            <Button
+                android:id="@+id/buttonCancelPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:drawableTint="@color/red"
+
+                android:drawableRight="@drawable/ic_outline_arrow_forward_ios_24"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/red"
+                android:padding="10dp"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+    </ScrollView>
+    <include layout="@layout/layout_reusable_loader_overlay"/>
+</FrameLayout>
