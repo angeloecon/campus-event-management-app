@@ -143,6 +143,20 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/text_status_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="COMPLETED"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            android:background="#E8F5E9"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
             android:id="@+id/card_text_poster"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

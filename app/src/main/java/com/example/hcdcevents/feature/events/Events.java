@@ -7,7 +7,8 @@ public class Events {
             eventDateString,
             eventID,
             eventAuthor,
-            eventLocation;
+            eventLocation,
+            status;
     private long timeStamp;
 
     public Events() {
@@ -22,6 +23,7 @@ public class Events {
         this.timeStamp = timeStamp;
         this.eventAuthor = eventAuthor;
         this.eventLocation = eventLocation;
+        this.status = "UPCOMING";
     }
 
     public String getEventOrganizer() {
@@ -40,7 +42,7 @@ public class Events {
     public String getEventAuthor() { return eventAuthor; }
     public String getEventLocation() { return eventLocation; }
     public long getTimeStamp() { return timeStamp; }
-
+    public String getStatus() { return status; }
     public void setEventOrganizer(String eventOrganizer) {
         this.eventOrganizer = eventOrganizer;
     }
@@ -59,4 +61,5 @@ public class Events {
     }
     public void setEventLocation(String eventLocation) { this.eventLocation = eventLocation; }
     public void setEventAuthor(String eventAuthor) { this.eventAuthor = eventAuthor; }
+    public void setStatus(String status) { this.status = status; }
 }
