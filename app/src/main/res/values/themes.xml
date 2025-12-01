@@ -6,7 +6,15 @@
         <item name="colorPrimary">@color/red</item>
     </style>
 
-    <style name="Theme.HCDCEvents" parent="Base.Theme.HCDCEvents" />
+    <style name="Theme.HCDCEvents" parent="Base.Theme.HCDCEvents" >
+        <item name="colorPrimary">@color/red</item>
+
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="android:statusBarColor">@color/red</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 
     <style name="Theme.HCDCEvents.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -16,14 +24,10 @@
     <style name="Theme.HCDCEvents.TransparentStatusBar" parent="Base.Theme.HCDCEvents">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-
-        <!-- 2. Set the status bar color to transparent -->
-        <!-- Note: We use a slight overlay color (#33000000) to ensure system icons (like time/battery) remain visible on light backgrounds -->
         <item name="android:statusBarColor">@android:color/transparent</item>
-
-        <!-- Optional: Ensure text/icons on the status bar are dark if your image is light -->
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
 
 
     <style name="Theme.HCDCEvents.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

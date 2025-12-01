@@ -3,23 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_main_items"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:title="Events" />
+
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_default_profile_placeholder"
-            android:title="@string/menu_profile" />
+            android:title="Profile" />
+
+
+    </group>
+
+    <group
+        android:id="@+id/nav_info"
+        android:checkableBehavior="none">
+
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_about" />
+            android:icon="@drawable/ic_menu_info"
+            android:title="About This App" />
+
+    </group>
+
+
+    <group
+        android:id="@+id/nav_secondary_items"
+        android:checkableBehavior="none">
+
         <item
             android:id="@+id/nav_log_out"
             android:icon="@drawable/ic_outline_arrow_left_alt_24"
-            android:title="@string/menu_logout"
-            />
+            android:title="Log out" />
     </group>
+
 </menu>

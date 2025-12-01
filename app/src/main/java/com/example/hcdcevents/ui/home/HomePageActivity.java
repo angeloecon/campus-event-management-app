@@ -1,6 +1,7 @@
 package com.example.hcdcevents.ui.home;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,38 +51,8 @@ public class HomePageActivity extends AppCompatActivity {
         binding = ActivityHomePageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarHomePage.toolbar);
+        navigationView();
 
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
-
-        View headerView = navigationView.getHeaderView(0);
-
-        nameTextView = headerView.findViewById(R.id.nameTextView);
-        emailTextView = headerView.findViewById(R.id.emailTextView);
-        drawableTextView = headerView.findViewById(R.id.imageView);
-
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_profile, R.id.nav_about)
-                .setOpenableLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home_page);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        navigationView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_log_out) {
-                logOut(drawer);
-                return true;
-            } else {
-                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
-                if (handled) {
-                    drawer.closeDrawer(GravityCompat.START);
-                }
-                return handled;
-            }
-        });
     }
 
     private void updateUI(){
@@ -151,6 +122,75 @@ public class HomePageActivity extends AppCompatActivity {
         } else {
             binding.appBarHomePage.fab.setVisibility(View.GONE);
         }
+    }
+
+    private void navigationView() {
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+
+        View headerView = navigationView.getHeaderView(0);
+
+        nameTextView = headerView.findViewById(R.id.nameTextView);
+        emailTextView = headerView.findViewById(R.id.emailTextView);
+        drawableTextView = headerView.findViewById(R.id.imageView);
+
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_profile, R.id.nav_about)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home_page);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_log_out) {
+                logOut(drawer);
+                return true;
+            } else {
+                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+                if (handled) {
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+                return handled;
+            }
+        });
+        drawer.setScrimColor(android.graphics.Color.TRANSPARENT);
+        View contentToBlur = binding.appBarHomePage.getRoot();
+        drawer.addDrawerListener(new androidx.drawerlayout.widget.DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@androidx.annotation.NonNull View drawerView, float slideOffset) {
+                // only for Android 12 (API 31) or newer
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    float radius = slideOffset * 20f; // Blur intensity
+                    if (radius > 0) {
+                        contentToBlur.setRenderEffect(
+                                android.graphics.RenderEffect.createBlurEffect(
+                                        radius, radius, android.graphics.Shader.TileMode.CLAMP
+                                )
+                        );
+                    } else {
+                        contentToBlur.setRenderEffect(null);
+                    }
+                }
+            }
+
+            @Override
+            public void onDrawerOpened(@androidx.annotation.NonNull View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(@androidx.annotation.NonNull View drawerView) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    contentToBlur.setRenderEffect(null);
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
     }
 
 }

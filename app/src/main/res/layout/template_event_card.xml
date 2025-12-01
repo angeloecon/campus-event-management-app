@@ -2,123 +2,161 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp">
+    android:layout_marginBottom="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#D32F2F" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/side_nav_bar"
-            android:padding="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageView
-            android:id="@+id/card_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_profile_placeholder"
-            android:layout_marginEnd="12dp"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/light_blue_300"/>
-
-            <TextView
-                android:id="@+id/card_text_organizer"
-                android:layout_weight="1"
+                android:id="@+id/card_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_default_profile_placeholder"
+                android:layout_marginEnd="12dp"
+                android:scaleType="centerCrop"
+                app:civ_border_width="0dp" />
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="[Organizer]"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/card_text_organizer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Computer Engineering Dept"
+                    android:textColor="#212121"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Organizer"
+                    android:textSize="11sp"
+                    android:textColor="#D32F2F"
+                    android:textAllCaps="true"/>
+            </LinearLayout>
 
             <ImageView
-
                 android:id="@+id/card_more_button"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
-                android:contentDescription="More Option Button"
                 android:focusable="true"
                 android:src="@drawable/ic_more_horiz"
-                app:tint="@color/white"
-                android:visibility="visible"
-                android:scaleType="fitCenter"
-
-                />
+                app:tint="#757575"
+                android:scaleType="centerInside" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F0F0F0"
+            android:layout_marginHorizontal="16dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_blue_300"
-            android:padding="12dp"
+            android:padding="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/card_text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="[EVENT TITLE]"
-                android:textSize="18sp"
+                tools:text="Annual Technology Symposium 2024"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#2C3E50"
-                android:layout_marginBottom="4dp"/>
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#1A237E"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="6dp"/>
 
             <TextView
                 android:id="@+id/card_text_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="[Event Description Goes Here]"
+                tools:text="Join us for a day of innovation and technology showcasing student projects."
                 android:textSize="14sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="8dp"/>
+                android:textColor="#546E7A"
+                android:lineSpacingMultiplier="1.2"
+                android:layout_marginBottom="16dp"/>
 
-            <TextView
-                android:id="@+id/card_text_date_time"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="[DATE &amp; TIME]"
-                android:textSize="14sp"
-                android:textColor="#34495E"
-                android:drawableStart="@android:drawable/ic_menu_today"
-                android:drawablePadding="6dp"
-                android:gravity="center_vertical"/>
+                android:orientation="vertical"
+                android:background="@drawable/bg_glass_effect_subtle">
+                <TextView
+                    android:id="@+id/card_text_date_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Monday, Oct 24 • 10:00 AM"
+                    android:textSize="13sp"
+                    android:textColor="#455A64"
+                    android:drawableStart="@android:drawable/ic_menu_today"
+                    android:drawableTint="#D32F2F"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp"/>
 
-            <TextView
-                android:id="@+id/card_text_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="[Location]"
-                android:textSize="14sp"
-                android:textColor="#34495E"
-                android:drawableStart="@drawable/ic_location"
-                android:drawablePadding="6dp"
-                android:gravity="center_vertical"/>
+                <TextView
+                    android:id="@+id/card_text_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Main Auditorium, 2nd Floor"
+                    android:textSize="13sp"
+                    android:textColor="#455A64"
+                    android:drawableStart="@drawable/ic_location"
+                    android:drawableTint="#1976D2"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
             android:id="@+id/card_text_poster"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Posted by: [Administrator Name]"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp"
-            android:background="@android:color/white"
-            android:textSize="12sp"
-            android:textColor="#3498DB"/>
-    </LinearLayout>
+            tools:text="Posted by: Admin User"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:background="#F5F7FA"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:textColor="#78909C"/>
 
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

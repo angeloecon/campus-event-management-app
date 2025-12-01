@@ -1,164 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".feature.auth.SignInActivity"
     android:id="@+id/main"
-    android:theme="@style/Theme.HCDCEvents.TransparentStatusBar">
-<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    >
-
+    android:theme="@style/Theme.HCDCEvents.TransparentStatusBar"
+    tools:context=".feature.auth.SignInActivity">
 
     <ImageView
         android:id="@+id/background_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/background_hcdc_main"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Background image" />
+        android:contentDescription="HCDC Campus Background" />
 
     <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/background_gradient_overlay"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-    android:id="@+id/hcdc_logo"
-    android:layout_width="200dp"
-    android:layout_height="200dp"
-    android:layout_marginTop="70dp"
-        android:src="@drawable/image_hcdc_logo_main"
-        app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    android:contentDescription="Holy Cross of Davao College Logo" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/login_card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="40dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hcdc_logo"
-        app:layout_constraintVertical_bias="0.3">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:background="@drawable/background_gradient_overlay"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:padding="24dp">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/hcdc_logo"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/image_hcdc_logo_main"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="HCDC Logo" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/login_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
+                android:layout_marginTop="32dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@id/hcdc_logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
-                    android:layout_marginBottom="16dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/email_input_text"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:paddingTop="18dp"
-                        android:paddingBottom="18dp"
-                        android:background="@null"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Welcome Back!"
+                        android:textSize="26sp"
+                        android:textColor="@color/red"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:layout_marginBottom="4dp"/>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Password"
-                    android:layout_marginBottom="16dp"
-                    app:passwordToggleEnabled="true"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/password_input_text"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:paddingTop="18dp"
-                        android:paddingBottom="18dp"
-                        android:background="@null" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Sign in to your account"
+                        android:textSize="14sp"
+                        android:textColor="#757575"
+                        android:gravity="center"
+                        android:layout_marginBottom="24dp"/>
 
-            </LinearLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Email Address"
+                        android:layout_marginBottom="16dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:startIconDrawable="@android:drawable/ic_dialog_email"
+                        app:startIconTint="@color/red"
+                        app:boxStrokeColor="@color/red"
+                        app:hintTextColor="@color/red">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/email_input_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/sign_in_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/red"
-                android:paddingVertical="12dp"
-                android:text="Sign in"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                app:cornerRadius="8dp"
-                android:layout_marginBottom="16dp"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Password"
+                        android:layout_marginBottom="24dp"
+                        app:passwordToggleEnabled="true"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:startIconDrawable="@drawable/ic_lock"
+                        app:startIconTint="@color/red"
+                        app:boxStrokeColor="@color/red"
+                        app:hintTextColor="@color/red">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/password_input_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="16dp">
+                    <Button
+                        android:id="@+id/sign_in_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Sign In"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/red"
+                        android:textColor="@color/white"
+                        app:cornerRadius="12dp"
+                        android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Don't have an account yet? " />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+                        <View
+                            android:layout_width="60dp"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="OR"
+                            android:textColor="#9E9E9E"
+                            android:textSize="12sp"
+                            android:paddingHorizontal="12dp"/>
+                        <View
+                            android:layout_width="60dp"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0"/>
+                    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/sign_up_page_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="left"
-                    android:text="Sign Up"
-                    android:textColor="@color/blue" />
+                    <Button
+                        android:id="@+id/google_sign_in_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Continue with Google"
+                        android:textColor="#333333"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="#DDDDDD"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/ic_google_logo"
+                        app:iconTint="@null"
+                        app:iconGravity="textStart"
+                        android:layout_marginBottom="24dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-            </LinearLayout>
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_sign_in_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                app:buttonSize="wide"
-                app:colorScheme="dark"
-                />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Don't have an account? "
+                            android:textColor="#666666"/>
 
-    </LinearLayout>
+                        <TextView
+                            android:id="@+id/sign_up_page_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sign Up"
+                            android:textStyle="bold"
+                            android:textColor="@color/blue"
+                            android:padding="8dp"/>
+                    </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <include layout="@layout/layout_reusable_loader_overlay"/>
+
 </FrameLayout>

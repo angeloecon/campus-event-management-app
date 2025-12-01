@@ -43,14 +43,15 @@
 
     <ImageView
         android:id="@+id/hcdc_logo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="40dp"
         android:src="@drawable/image_hcdc_logo_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Holy Cross of Davao College Logo" />
+        android:contentDescription="HCDC Logo" />
+
 
 
     <androidx.cardview.widget.CardView
@@ -72,102 +73,110 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
+                android:text="Welcome!"
+                android:textSize="26sp"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:layout_marginBottom="4dp"/>
 
-                <com.google.android.material.textfield.TextInputLayout
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sign up to create your account"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_marginBottom="24dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email Address"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:startIconDrawable="@android:drawable/ic_dialog_email"
+                app:startIconTint="@color/red"
+                app:boxStrokeColor="@color/red"
+                app:hintTextColor="@color/red">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email_input_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
-                    android:layout_marginBottom="16dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/email_input_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:paddingTop="18dp"
-                        android:paddingBottom="18dp"
-                        android:background="@null" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:layout_marginBottom="24dp"
+                app:passwordToggleEnabled="true"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconTint="@color/red"
+                app:boxStrokeColor="@color/red"
+                app:hintTextColor="@color/red">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password_input_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
-                    android:layout_marginBottom="16dp"
-                    app:passwordToggleEnabled="true"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Academic Division"
+                android:layout_marginBottom="24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/password_input_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:paddingTop="18dp"
-                        android:paddingBottom="18dp"
-                        android:background="@null" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
+                <AutoCompleteTextView
+                    android:id="@+id/program_dropdown_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Academic Division"
-                    android:layout_marginBottom="24dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/program_dropdown_edit_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:editable="false"
-                        android:paddingVertical="18dp"
-                        android:background="@null"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-            </LinearLayout>
+                    android:inputType="none"
+                    android:editable="false"
+                    android:paddingVertical="18dp"
+                    android:background="@null"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/sign_up_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/red"
-                android:paddingVertical="12dp"
-                android:text="Sign up"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
+                android:layout_height="56dp"
+                android:text="Sign Up"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:cornerRadius="8dp"
+                android:backgroundTint="@color/red"
+                android:textColor="@color/white"
+                app:cornerRadius="12dp"
                 android:layout_marginBottom="16dp"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginEnd="4dp">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Already have an account? " />
+                    android:text="Already have account? "
+                    android:textColor="#666666"/>
 
                 <TextView
                     android:id="@+id/log_in_page_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="start"
                     android:text="Sign In"
-                    android:textColor="@color/blue"/>
+                    android:textStyle="bold"
+                    android:textColor="@color/blue"
+                    android:padding="8dp"/>
             </LinearLayout>
-
 
         </LinearLayout>
 

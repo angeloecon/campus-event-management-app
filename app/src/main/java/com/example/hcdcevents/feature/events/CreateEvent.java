@@ -2,26 +2,20 @@ package com.example.hcdcevents.feature.events;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hcdcevents.R;
 import com.example.hcdcevents.data.model.StudentCache;
-import com.example.hcdcevents.ui.home.HomeFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,12 +30,20 @@ import java.util.Locale;
 
 public class CreateEvent extends AppCompatActivity {
 
-    private TextInputEditText editTextEventTitle, editTextEventDescription, editTextOrganizer, editTextLocation;
-    private TextView textViewSelectedDate, textViewSelectedTime;
+    // Defined all inputs as TextInputEditText (matching your new XML)
+    private TextInputEditText inputTitle, inputDescription, inputOrganizer, inputLocation, inputDate, inputTime;
+
     private DatabaseReference eventDbRef;
     private Calendar selectedDateTimeCalendar;
     private String currentEventID;
     private boolean isEditMode = false;
+
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
+    private final SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.US);
+
+
+    private final SimpleDateFormat dbFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,31 +53,33 @@ public class CreateEvent extends AppCompatActivity {
 
         eventDbRef = FirebaseDatabase.getInstance().getReference("events");
 
+        // 1. Bind Views
+        inputTitle = findViewById(R.id.editTextEventTitle);
+        inputDescription = findViewById(R.id.editTextEventDescription);
+        inputOrganizer = findViewById(R.id.editTextEventOrganizer);
+        inputLocation = findViewById(R.id.editTextEventLocation);
+        inputDate = findViewById(R.id.editTextEventDate); // New ID from XML
+        inputTime = findViewById(R.id.editTextEventTime); // New ID from XML
+        Button createButton = findViewById(R.id.buttonCreatePost);
+        Button cancelButton = findViewById(R.id.buttonCancelPost);
 
-        editTextEventTitle = findViewById(R.id.editTextEventTitle);
-        editTextEventDescription = findViewById(R.id.editTextEventDescription);
-        editTextOrganizer = findViewById(R.id.editTextEventOrganizer);
-        editTextLocation = findViewById(R.id.editTextEventLocation);
-        textViewSelectedTime = findViewById(R.id.textViewSelectedTime);
-        textViewSelectedDate = findViewById(R.id.textViewSelectedDate);
         selectedDateTimeCalendar = Calendar.getInstance();
 
-        findViewById(R.id.buttonCancelPost).setOnClickListener(v -> cancelCreateEvent());
 
-        findViewById(R.id.buttonPickDate).setOnClickListener(v -> showDatePickerDialog());
-        findViewById(R.id.buttonPickTime).setOnClickListener(v -> showTimePickerDialog());
-        Button createButton = findViewById(R.id.buttonCreatePost);
+        inputDate.setOnClickListener(v -> showDatePickerDialog());
+        inputTime.setOnClickListener(v -> showTimePickerDialog());
 
-        if(getIntent().hasExtra("EVENT_MODE") && "EDIT".equals(getIntent().getStringExtra("EVENT_MODE"))){
+        cancelButton.setOnClickListener(v -> finish());
+
+        // 3. Handle Edit Mode
+        if (getIntent().hasExtra("EVENT_MODE") && "EDIT".equals(getIntent().getStringExtra("EVENT_MODE"))) {
             currentEventID = getIntent().getStringExtra("EVENT_KEY");
             isEditMode = true;
             createButton.setText("Update Event");
-            createButton.setOnClickListener(v -> eventPostStatus());
             loadExistingData(currentEventID);
-            return;
         }
 
-        createButton.setOnClickListener(v -> eventPostStatus());
+        createButton.setOnClickListener(v -> validateAndPostEvent());
     }
 
     private void showDatePickerDialog() {
@@ -85,7 +89,8 @@ public class CreateEvent extends AppCompatActivity {
                     selectedDateTimeCalendar.set(Calendar.YEAR, year);
                     selectedDateTimeCalendar.set(Calendar.MONTH, month);
                     selectedDateTimeCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    updateDateTextView();
+                    // Update the Text Input
+                    inputDate.setText(dateFormat.format(selectedDateTimeCalendar.getTime()));
                 },
                 selectedDateTimeCalendar.get(Calendar.YEAR),
                 selectedDateTimeCalendar.get(Calendar.MONTH),
@@ -94,13 +99,15 @@ public class CreateEvent extends AppCompatActivity {
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
+
     private void showTimePickerDialog() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 this,
                 (view, hourOfDay, minute) -> {
                     selectedDateTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     selectedDateTimeCalendar.set(Calendar.MINUTE, minute);
-                    updateTimeTextView();
+                    // Update the Text Input
+                    inputTime.setText(timeFormat.format(selectedDateTimeCalendar.getTime()));
                 },
                 selectedDateTimeCalendar.get(Calendar.HOUR_OF_DAY),
                 selectedDateTimeCalendar.get(Calendar.MINUTE),
@@ -109,73 +116,63 @@ public class CreateEvent extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    private void updateDateTextView(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US);
-        textViewSelectedDate.setText(dateFormat.format(selectedDateTimeCalendar.getTime()));
-    }
+    private void validateAndPostEvent() {
+        String title = inputTitle.getText() != null ? inputTitle.getText().toString().trim() : "";
+        String details = inputDescription.getText() != null ? inputDescription.getText().toString().trim() : "";
+        String organizer = inputOrganizer.getText() != null ? inputOrganizer.getText().toString().trim() : "";
+        String location = inputLocation.getText() != null ? inputLocation.getText().toString().trim() : "";
+        String dateVal = inputDate.getText() != null ? inputDate.getText().toString() : "";
+        String timeVal = inputTime.getText() != null ? inputTime.getText().toString() : "";
 
-    private void updateTimeTextView(){
-        SimpleDateFormat timeFormat = new SimpleDateFormat("h.mm a ", Locale.US);
-        textViewSelectedTime.setText(timeFormat.format(selectedDateTimeCalendar.getTime()));
-    }
-
-
-    private void eventPostStatus(){
-        CharSequence initialEventTitle = editTextEventTitle.getText();
-        CharSequence initialEventDetails = editTextEventDescription.getText();
-        CharSequence initialEventOrganizer = editTextOrganizer.getText();
-        CharSequence initialEventLocation = editTextLocation.getText();
-
-        if(initialEventTitle == null || initialEventTitle.length() == 0){
-            editTextEventTitle.setError("This field should not be empty.");
+        // Validations
+        if (TextUtils.isEmpty(title)) {
+            inputTitle.setError("Title is required");
+            return;
+        }
+        if (TextUtils.isEmpty(details)) {
+            inputDescription.setError("Description is required");
+            return;
+        }
+        if (TextUtils.isEmpty(organizer)) {
+            inputOrganizer.setError("Organizer is required");
+            return;
+        }
+        if (TextUtils.isEmpty(location)) {
+            inputLocation.setError("Location is required");
+            return;
+        }
+        if (TextUtils.isEmpty(dateVal)) {
+            inputDate.setError("Date is required");
+            Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(timeVal)) {
+            inputTime.setError("Time is required");
+            Toast.makeText(this, "Please select a time", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(initialEventDetails == null || initialEventDetails.length() == 0){
-            editTextEventDescription.setError("This field should not be empty.");
-            return;
-        }
-
-        if(initialEventOrganizer == null || initialEventOrganizer.length() == 0){
-            editTextOrganizer.setError("This field should not be empty.");
-            return;
-        }
-
-        if(initialEventLocation == null || initialEventLocation.length() == 0){
-            editTextLocation.setError("Location is required.");
-        }
-
-        if(textViewSelectedDate.getText().toString().equals("No date selected")|| textViewSelectedTime.getText().toString().equals("No time selected")){
-            Toast.makeText(CreateEvent.this, "Please fill in all the event details", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        // Prepare Data for Database
         long timeStamp = selectedDateTimeCalendar.getTimeInMillis();
+        // We reconstruct the full string for the DB to maintain compatibility
+        String fullSchedString = dbFormat.format(selectedDateTimeCalendar.getTime());
 
-        SimpleDateFormat fullTimeDateFormat = new SimpleDateFormat("EEEE, MMMM, d, yyyy 'at' h:mm a", Locale.US);
-        String timeDateString = fullTimeDateFormat.format(selectedDateTimeCalendar.getTime());
-        String finalEventTitle = initialEventTitle.toString().trim();
-        String finalEventDetails = initialEventDetails.toString().trim();
-        String finalEventOrganizer = initialEventOrganizer.toString().trim();
-        String finalEventLocation = initialEventLocation.toString().trim();
-
-        if(isEditMode){
-            editExistingEvent(finalEventTitle, finalEventDetails, finalEventOrganizer, timeDateString, timeStamp, finalEventLocation);
-            return;
+        if (isEditMode) {
+            updateEventInDb(title, details, organizer, fullSchedString, timeStamp, location);
+        } else {
+            String newEventId = eventDbRef.push().getKey();
+            if (newEventId != null) {
+                saveNewEventToDb(newEventId, title, details, organizer, fullSchedString, timeStamp, location);
+            } else {
+                Toast.makeText(this, "Error generating ID", Toast.LENGTH_SHORT).show();
+            }
         }
-
-        String eventId = eventDbRef.push().getKey();
-
-        if(eventId == null){
-            Toast.makeText(CreateEvent.this, "Failed to generate event ID", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        createNewEventPost(eventId, finalEventTitle, finalEventDetails, finalEventOrganizer, timeDateString, timeStamp, finalEventLocation);
     }
 
-    private void createNewEventPost(String eventId, String eventTitle, String eventDetails, String eventOrganizer, String eventSched, long eventStamp, String location){
+    private void saveNewEventToDb(String eventId, String title, String details, String organizer, String sched, long timeStamp, String location) {
         showLoadingIndicator(true);
-        Events newEvent = new Events(eventOrganizer, eventTitle, eventDetails, eventSched, eventId, eventStamp, StudentCache.getCurrentName(), location);
+        Events newEvent = new Events(organizer, title, details, sched, eventId, timeStamp, StudentCache.getCurrentName(), location);
+
         eventDbRef.child(eventId).setValue(newEvent)
                 .addOnSuccessListener(aVoid -> {
                     showLoadingIndicator(false);
@@ -184,73 +181,71 @@ public class CreateEvent extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     showLoadingIndicator(false);
-                    Toast.makeText(CreateEvent.this, "Failed to post event.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEvent.this, "Failed to post event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
-    private void cancelCreateEvent(){
-        finish();
+    private void updateEventInDb(String title, String details, String organizer, String sched, long timeStamp, String location) {
+        showLoadingIndicator(true);
+        Events updatedEvent = new Events(organizer, title, details, sched, currentEventID, timeStamp, StudentCache.getCurrentName() + " (edited)", location);
+
+        eventDbRef.child(currentEventID).setValue(updatedEvent)
+                .addOnSuccessListener(aVoid -> {
+                    showLoadingIndicator(false);
+                    Toast.makeText(CreateEvent.this, "Event updated successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    showLoadingIndicator(false);
+                    Toast.makeText(CreateEvent.this, "Failed to update event.", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    private void loadExistingData(String eventID){
+    private void loadExistingData(String eventID) {
+        showLoadingIndicator(true);
         eventDbRef.child(eventID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Events currentEvent = snapshot.getValue(Events.class);
-                if(snapshot.exists()){
-                    if(currentEvent != null){
-                        editTextEventTitle.setText(currentEvent.getEventTitle());
-                        editTextEventDescription.setText(currentEvent.getEventDetails());
-                        editTextOrganizer.setText(currentEvent.getEventOrganizer());
-                        editTextLocation.setText(currentEvent.getEventLocation());
-                        textViewSelectedTime.setText(String.valueOf(currentEvent.getTimeStamp()));
-                        textViewSelectedDate.setText(currentEvent.getEventDateString());
-                        String fullDateTimeString = currentEvent.getEventDateString();
-                        SimpleDateFormat fullTimeDateFormat = new SimpleDateFormat("EEEE, MMMM, d, yyyy 'at' h:mm a", Locale.US);
-                        try{
-                            Date eventDate = fullTimeDateFormat.parse(fullDateTimeString);
+                showLoadingIndicator(false);
+                Events event = snapshot.getValue(Events.class);
+                if (event != null) {
+                    inputTitle.setText(event.getEventTitle());
+                    inputDescription.setText(event.getEventDetails());
+                    inputOrganizer.setText(event.getEventOrganizer());
+                    inputLocation.setText(event.getEventLocation());
 
-                            selectedDateTimeCalendar.setTime(eventDate);
-                            updateDateTextView();
-                            updateTimeTextView();
-                        } catch (Exception e){
-                            Log.e("EDIT_EVENT", "Date parsing failed: " + e.getMessage());
-                            selectedDateTimeCalendar = Calendar.getInstance();
+                    if (event.getTimeStamp() > 0) {
+                        selectedDateTimeCalendar.setTimeInMillis(event.getTimeStamp());
+                    } else {
+                        try {
+                            Date date = dbFormat.parse(event.getEventDateString());
+                            if (date != null) selectedDateTimeCalendar.setTime(date);
+                        } catch (Exception e) {
+                            Log.e("CreateEvent", "Error parsing date", e);
                         }
                     }
+                    inputDate.setText(dateFormat.format(selectedDateTimeCalendar.getTime()));
+                    inputTime.setText(timeFormat.format(selectedDateTimeCalendar.getTime()));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("EDIT_EVENT", "Failed to load event data: " + error.getMessage());
-                Toast.makeText(CreateEvent.this, "Error loading event.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void editExistingEvent(String eventTitle, String eventDetails, String eventOrganizer, String eventSched, long eventStamp, String location){
-        showLoadingIndicator(true);
-        Events updatedEventValue = new Events(eventOrganizer, eventTitle, eventDetails, eventSched, currentEventID, eventStamp, StudentCache.getCurrentName() + " (edited)", location);
-        eventDbRef.child(currentEventID).setValue(updatedEventValue).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                Toast.makeText(CreateEvent.this, "Event edited successfully!", Toast.LENGTH_SHORT).show();
                 showLoadingIndicator(false);
-                finish();
-            } else {
-                showLoadingIndicator(false);
-                Toast.makeText(this, "Failed to update event.", Toast.LENGTH_LONG).show();
+                Toast.makeText(CreateEvent.this, "Error loading data", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showLoadingIndicator(boolean show) {
         LinearLayout loadingOverlay = findViewById(R.id.loading_overlay);
+        Button createBtn = findViewById(R.id.buttonCreatePost);
 
         if (loadingOverlay != null) {
             loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);
-            loadingOverlay.setVisibility(show? View.VISIBLE: View.GONE);
-            findViewById(R.id.buttonCreatePost).setEnabled(!show);
+        }
+        if (createBtn != null) {
+            createBtn.setEnabled(!show);
         }
     }
 }
