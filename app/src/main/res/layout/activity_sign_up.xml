@@ -99,7 +99,7 @@
                 android:hint="Email Address"
                 android:layout_marginBottom="16dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:startIconDrawable="@android:drawable/ic_dialog_email"
+                app:startIconDrawable="@drawable/ic_profile_email_alt"
                 app:startIconTint="@color/red"
                 app:boxStrokeColor="@color/red"
                 app:hintTextColor="@color/red">
@@ -132,6 +132,10 @@
                 android:layout_height="wrap_content"
                 android:hint="Academic Division"
                 android:layout_marginBottom="24dp"
+                app:startIconDrawable="@drawable/ic_outline_book"
+                app:startIconTint="@color/red"
+                app:boxStrokeColor="@color/red"
+                app:hintTextColor="@color/red"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                 <AutoCompleteTextView
