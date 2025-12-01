@@ -42,9 +42,9 @@ public class HomeViewModel extends ViewModel {
                         listOfEvent.add(event);
                     }
                 }
-
-                listOfEvent.sort((o1, o2) -> Long.compare(o2.getTimeStamp(), o1.getTimeStamp()));
-
+//              Ascending Mode
+                listOfEvent.sort(Comparator.comparingLong(Events::getTimeStamp));
+//                listOfEvent.sort((o1, o2) -> Long.compare(o2.getTimeStamp(), o1.getTimeStamp()));
                 eventsList.setValue(listOfEvent);
             }
 

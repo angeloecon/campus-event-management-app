@@ -19,12 +19,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
+            android:paddingHorizontal="10dp"
             android:paddingTop="24dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="14dp"
                 android:text="About Us"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-black"
@@ -37,7 +38,8 @@
                 android:text="Meet the developers and learn about the project."
                 android:textSize="14sp"
                 android:textColor="#757575"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="24dp"
+                android:layout_marginHorizontal="14dp"/>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -45,7 +47,8 @@
                 app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                android:layout_marginBottom="32dp">
+                android:layout_marginBottom="32dp"
+                android:layout_marginHorizontal="14dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -95,14 +98,16 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#212121"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                android:layout_marginHorizontal="14dp"/>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="6dp"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:layout_marginHorizontal="14dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -166,7 +171,8 @@
                 android:layout_height="220dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="6dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="14dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

@@ -1,12 +1,14 @@
 package com.example.hcdcevents.ui.home;
 
+import static android.view.View.GONE;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -32,15 +34,18 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private LinearLayout eventContainer;
     private DatabaseReference eventRef;
     private HomeViewModel homeViewModel;
-    private List<Events> allEventsList = new ArrayList<>();
+    private final List<Events> allEventsList = new ArrayList<>();
     private TabLayout tabLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -137,6 +142,7 @@ public class HomeFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     public void eventCard(Events eventInfo) {
         Context context = getContext();
+
         if (context == null || eventContainer == null) return;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -151,6 +157,15 @@ public class HomeFragment extends Fragment {
         TextView cardTextLocation = eventCard.findViewById(R.id.card_text_location);
         TextView statusLabel = eventCard.findViewById(R.id.text_status_label);
         ImageView cardMoreButton = eventCard.findViewById(R.id.card_more_button);
+        ImageView btnAddToCalendar = eventCard.findViewById(R.id.btn_add_to_calendar);
+
+        btnAddToCalendar.setOnClickListener(v -> {
+            long eventTime = eventInfo.getTimeStamp();
+            if(eventTime == 0) {
+                eventTime = parseDateStringToMillis(eventInfo.getEventDateString());
+            }
+            addEventToCalendar(eventInfo.getEventTitle(), eventInfo.getEventDetails(), eventInfo.getEventLocation(), eventTime);
+        });
 
         cardIcon.setImageDrawable(Helper.iconGenerator(eventInfo.getEventOrganizer()));
         cardTextOrganizer.setText(eventInfo.getEventOrganizer());
@@ -160,23 +175,26 @@ public class HomeFragment extends Fragment {
         cardTextDateTime.setText(eventInfo.getEventDateString());
         cardTextAuthor.setText("Created by: " + eventInfo.getEventAuthor());
 
-        cardMoreButton.setVisibility(StudentCache.isCurrentIsAdmin() ? View.VISIBLE : View.GONE);
+        cardMoreButton.setVisibility(StudentCache.isCurrentIsAdmin() ? View.VISIBLE : GONE);
 
         String currentStatus = eventInfo.getStatus() == null ? "UPCOMING" : eventInfo.getStatus();
         cardMoreButton.setOnClickListener(v -> popUpMenu(context, v, eventInfo.getEventID(), eventInfo.getEventTitle(), currentStatus));
 
         if ("COMPLETED".equals(currentStatus)) {
+            btnAddToCalendar.setVisibility(GONE);
             statusLabel.setVisibility(View.VISIBLE);
             cardTextTitle.setAlpha(0.5f);
             cardTextTitle.setPaintFlags(cardTextTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
-            statusLabel.setVisibility(View.GONE);
+            statusLabel.setVisibility(GONE);
             cardTextTitle.setAlpha(1.0f);
             cardTextTitle.setPaintFlags(cardTextTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
         eventContainer.addView(eventCard);
     }
 
+
+//  TODO: Pop up menu =============================
     private void deleteEvent(String eventID, String eventTitle) {
         if (getContext() == null) return;
         homeViewModel.deleteEvent(eventID);
@@ -196,15 +214,16 @@ public class HomeFragment extends Fragment {
 
     private void popUpMenu(Context context, View v, String eventID, String eventTitle, String eventStatus) {
         PopupMenu popup = new PopupMenu(context, v);
-        popup.getMenu().add(Menu.NONE, 1, Menu.NONE, "Edit Event");
-        popup.getMenu().add(Menu.NONE, 2, Menu.NONE, "Delete Event");
 
         if (!"COMPLETED".equals(eventStatus)) {
+            popup.getMenu().add(Menu.NONE, 1, Menu.NONE, "Edit Event");
             popup.getMenu().add(Menu.NONE, 3, Menu.NONE, "Mark as Completed");
         }
+        popup.getMenu().add(Menu.NONE, 2, Menu.NONE, "Delete Event");
 
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
+
             if (id == 1) {
                 editEventInfo(eventID);
                 return true;
@@ -212,7 +231,7 @@ public class HomeFragment extends Fragment {
                 confirmDeleteEvent(eventID, eventTitle);
                 return true;
             } else if (id == 3) {
-                updateEventStatus(eventID, "COMPLETED");
+                updateEventStatus(eventID);
                 return true;
             }
             return false;
@@ -220,10 +239,10 @@ public class HomeFragment extends Fragment {
         popup.show();
     }
 
-    private void updateEventStatus(String eventID, String newStatus) {
-        eventRef.child(eventID).child("status").setValue(newStatus)
+    private void updateEventStatus(String eventID) {
+        eventRef.child(eventID).child("status").setValue("COMPLETED")
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getContext(), "Event marked as " + newStatus, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Event marked as COMPLETED", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to update status", Toast.LENGTH_SHORT).show();
@@ -235,6 +254,37 @@ public class HomeFragment extends Fragment {
         intent.putExtra("EVENT_KEY", eventID);
         intent.putExtra("EVENT_MODE", "EDIT");
         startActivity(intent);
+    }
+
+
+// TODO: Add to calendar--------------------
+    private void addEventToCalendar(String title, String description, String location, long startTimeInMillis) {
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setData(CalendarContract.Events.CONTENT_URI);
+
+        intent.putExtra(CalendarContract.Events.TITLE, title);
+        intent.putExtra(CalendarContract.Events.DESCRIPTION, description);
+        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, location);
+
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTimeInMillis);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, startTimeInMillis + (2 * 60 * 60 * 1000));
+
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "No Calendar app found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private long parseDateStringToMillis(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a", Locale.US);
+            Date date = sdf.parse(dateString);
+            return date != null ? date.getTime() : System.currentTimeMillis();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return System.currentTimeMillis();
+        }
     }
 
     @Override
