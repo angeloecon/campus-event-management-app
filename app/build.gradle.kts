@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.hcdcevents"
-        minSdk = 24
+        minSdk = 33
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -52,7 +52,7 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation("com.airbnb.android:lottie:6.6.6")
 
-    implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
+//    implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)

@@ -28,7 +28,13 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <style name="Theme.HCDCEvents.Splash" parent="Theme.HCDCEvents.TransparentStatusBar">
+        <item name="android:windowBackground">@color/white</item>
 
+        <item name="android:windowFullscreen">true</item>
+
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@android:color/transparent</item>
+    </style>
 
     <style name="Theme.HCDCEvents.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

@@ -1,4 +1,4 @@
-package com.example.hcdcevents;
+package com.example.hcdcevents.splash;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,9 @@ import android.os.Looper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hcdcevents.R;
 import com.example.hcdcevents.feature.auth.SignInActivity;
-import com.example.hcdcevents.ui.home.HomePageActivity;
 
 public class SplashAnimation extends AppCompatActivity {
 
@@ -25,25 +22,16 @@ public class SplashAnimation extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash_animation);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-
         runnable = new Runnable() {
             @Override
             public void run() {
-
                 Intent intent = new Intent(SplashAnimation.this, SignInActivity.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
             }
         };
-
-
-        handler.postDelayed(runnable, 4000);
+        handler.postDelayed(runnable, 4500);
     }
 
     @Override
