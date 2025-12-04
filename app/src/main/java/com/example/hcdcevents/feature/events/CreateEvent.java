@@ -30,7 +30,6 @@ import java.util.Locale;
 
 public class CreateEvent extends AppCompatActivity {
 
-    // Defined all inputs as TextInputEditText (matching your new XML)
     private TextInputEditText inputTitle, inputDescription, inputOrganizer, inputLocation, inputDate, inputTime;
 
     private DatabaseReference eventDbRef;
@@ -38,10 +37,8 @@ public class CreateEvent extends AppCompatActivity {
     private String currentEventID;
     private boolean isEditMode = false;
 
-
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.US);
-
 
     private final SimpleDateFormat dbFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a", Locale.US);
 
@@ -53,13 +50,13 @@ public class CreateEvent extends AppCompatActivity {
 
         eventDbRef = FirebaseDatabase.getInstance().getReference("events");
 
-        // 1. Bind Views
+
         inputTitle = findViewById(R.id.editTextEventTitle);
         inputDescription = findViewById(R.id.editTextEventDescription);
         inputOrganizer = findViewById(R.id.editTextEventOrganizer);
         inputLocation = findViewById(R.id.editTextEventLocation);
-        inputDate = findViewById(R.id.editTextEventDate); // New ID from XML
-        inputTime = findViewById(R.id.editTextEventTime); // New ID from XML
+        inputDate = findViewById(R.id.editTextEventDate);
+        inputTime = findViewById(R.id.editTextEventTime);
         Button createButton = findViewById(R.id.buttonCreatePost);
         Button cancelButton = findViewById(R.id.buttonCancelPost);
 
@@ -71,7 +68,6 @@ public class CreateEvent extends AppCompatActivity {
 
         cancelButton.setOnClickListener(v -> finish());
 
-        // 3. Handle Edit Mode
         if (getIntent().hasExtra("EVENT_MODE") && "EDIT".equals(getIntent().getStringExtra("EVENT_MODE"))) {
             currentEventID = getIntent().getStringExtra("EVENT_KEY");
             isEditMode = true;
@@ -89,7 +85,6 @@ public class CreateEvent extends AppCompatActivity {
                     selectedDateTimeCalendar.set(Calendar.YEAR, year);
                     selectedDateTimeCalendar.set(Calendar.MONTH, month);
                     selectedDateTimeCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    // Update the Text Input
                     inputDate.setText(dateFormat.format(selectedDateTimeCalendar.getTime()));
                 },
                 selectedDateTimeCalendar.get(Calendar.YEAR),
@@ -106,7 +101,6 @@ public class CreateEvent extends AppCompatActivity {
                 (view, hourOfDay, minute) -> {
                     selectedDateTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     selectedDateTimeCalendar.set(Calendar.MINUTE, minute);
-                    // Update the Text Input
                     inputTime.setText(timeFormat.format(selectedDateTimeCalendar.getTime()));
                 },
                 selectedDateTimeCalendar.get(Calendar.HOUR_OF_DAY),
@@ -124,7 +118,6 @@ public class CreateEvent extends AppCompatActivity {
         String dateVal = inputDate.getText() != null ? inputDate.getText().toString() : "";
         String timeVal = inputTime.getText() != null ? inputTime.getText().toString() : "";
 
-        // Validations
         if (TextUtils.isEmpty(title)) {
             inputTitle.setError("Title is required");
             return;
@@ -152,9 +145,9 @@ public class CreateEvent extends AppCompatActivity {
             return;
         }
 
-        // Prepare Data for Database
+
         long timeStamp = selectedDateTimeCalendar.getTimeInMillis();
-        // We reconstruct the full string for the DB to maintain compatibility
+
         String fullSchedString = dbFormat.format(selectedDateTimeCalendar.getTime());
 
         if (isEditMode) {

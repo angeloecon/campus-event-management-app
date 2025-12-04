@@ -40,6 +40,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private LinearLayout eventContainer;
@@ -47,6 +49,7 @@ public class HomeFragment extends Fragment {
     private HomeViewModel homeViewModel;
     private final List<Events> allEventsList = new ArrayList<>();
     private TabLayout tabLayout;
+    private SwipeRefreshLayout swipeRefresh;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -63,9 +66,10 @@ public class HomeFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                // When tab is clicked, filter the EXISTING list
                 if (tab.getPosition() == 0) {
                     filterEvents("UPCOMING");
+                } else if (tab.getPosition() == 1) {
+                    filterEvents("ONGOING");
                 } else {
                     filterEvents("COMPLETED");
                 }
@@ -73,6 +77,19 @@ public class HomeFragment extends Fragment {
 
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        swipeRefresh = root.findViewById(R.id.swipeRefreshLayout);
+        swipeRefresh.setOnRefreshListener(() -> {
+
+            homeViewModel.loadEvents();
+
+            int currentTab = tabLayout.getSelectedTabPosition();
+            if (currentTab == 0) filterEvents("UPCOMING");
+            else if (currentTab == 1) filterEvents("ONGOING");
+            else filterEvents("COMPLETED");
+
+            swipeRefresh.setRefreshing(false);
         });
 
         return root;
@@ -95,46 +112,73 @@ public class HomeFragment extends Fragment {
             }
 
             int currentTab = tabLayout.getSelectedTabPosition();
-            if (currentTab == 1) {
-                filterEvents("COMPLETED");
-            } else {
+            if (currentTab == 0) {
                 filterEvents("UPCOMING");
+            } else if (currentTab == 1) {
+                filterEvents("ONGOING");
+            } else {
+                filterEvents("COMPLETED");
             }
         });
     }
 
     private void filterEvents(String statusToShow) {
         eventContainer.removeAllViews();
-
+        long currentTime = System.currentTimeMillis();
         boolean hasEvents = false;
 
         for (Events event : allEventsList) {
             String currentStatus = event.getStatus();
+            boolean isMatch = false;
             if (currentStatus == null) currentStatus = "UPCOMING";
+            long eventTime = event.getTimeStamp();
 
-            if (statusToShow.equals("UPCOMING")) {
-                // Show if UPCOMING or null
-                if (!"COMPLETED".equals(currentStatus)) {
-                    eventCard(event);
-                    hasEvents = true;
+            if (statusToShow.equals("COMPLETED")) {
+
+                if (currentStatus.equals("COMPLETED")) isMatch = true;
+
+            } else if (statusToShow.equals("ONGOING")) {
+                if (!currentStatus.equals("COMPLETED") && eventTime <= currentTime && eventTime > (currentTime - 86400000)) {
+                    isMatch = true;
                 }
-            } else {
-                if ("COMPLETED".equals(currentStatus)) {
-                    eventCard(event);
-                    hasEvents = true;
+
+            } else if (statusToShow.equals("UPCOMING")) {
+                if (!currentStatus.equals("COMPLETED") && eventTime > currentTime) {
+                    isMatch = true;
                 }
+            }
+
+            if (isMatch) {
+                eventCard(event);
+                hasEvents = true;
             }
         }
 
-        if (!hasEvents) {
-            showEmptyState();
-        }
+        if (!hasEvents) showEmptyState(statusToShow);;
     }
 
-    private void showEmptyState() {
+    private void showEmptyState(String currentTabStatus) {
         if (getContext() != null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View emptyView = inflater.inflate(R.layout.layout_empty_event, eventContainer, false);
+
+            TextView titleText = emptyView.findViewById(R.id.empty_state_title);
+            TextView messageText = emptyView.findViewById(R.id.empty_state_description);
+
+            if ("ONGOING".equals(currentTabStatus)) {
+                titleText.setText("No Ongoing Events");
+                messageText.setText("There are no events happening right now.");
+            }
+            else if ("COMPLETED".equals(currentTabStatus)) {
+                titleText.setText("No History Found");
+                messageText.setText("Past events will appear here once they are finished.");
+            }
+            else {
+
+                titleText.setText("No Upcoming Events");
+                messageText.setText("Check back soon for new events!");
+            }
+
             eventContainer.addView(emptyView);
         }
     }
